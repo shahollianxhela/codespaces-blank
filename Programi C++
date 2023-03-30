@@ -1,0 +1,69 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+
+class employee {
+public:
+    bool salaried;
+    float annual, hours, rate;
+    void adddToWages(float& s, float& h, float& g) {
+        if (!salaried) {
+            s += annual / (float)24;
+            g += annual / (float)24;
+        } else {
+            h += hours * rate;
+            g += hours * rate;
+        }
+    }
+};
+
+int addEmployees(std::vector<employee>& company);
+
+int main() {
+    float totalSalariedWage = 0;
+    float totalHourlyWage = 0;
+    float totalGrossWage = 0;
+    std::vector<employee> company;
+
+    addEmployees(company);
+
+    for (int i = 0; i < company.size(); i++) {
+        company[i].adddToWages(totalSalariedWage, totalHourlyWage, totalGrossWage);
+    }
+
+    if ((int)totalSalariedWage % 1 != 0 || (int)totalHourlyWage % 1 != 0 || (int)totalGrossWage % 1 != 0) {
+        std::cout << std::fixed;
+        std::cout << std::setprecision(2);
+    }
+
+    std::cout << "\nTotal wages for salaried employees: " << totalSalariedWage << "\n";
+    std::cout << "Total wages for hourly employees: " << totalHourlyWage << "\n";
+    std::cout << "Total gross wages: " << totalGrossWage << std::endl;
+    return 0;
+}
+
+int addEmployees(std::vector<employee>& company) {
+    int more = 0;
+    do {
+        employee employee{};
+        std::cout << "The employee is salaried or paid hourly? (0 - Salaried, 1 - Paid hourly) ";
+        std::cin >> employee.salaried;
+        if (!employee.salaried) {
+            std::cout << "Enter annual salary: ";
+            std::cin >> employee.annual;
+        } else {
+            std::cout << "Enter hours worked: ";
+            std::cin >> employee.hours;
+            if (employee.hours < 0 || employee.hours > 40) {
+                std::cout << "Hours could be wrong! Re-enter please: ";
+                std::cin >> employee.hours;
+            }
+            std::cout << "Enter rate per hour: ";
+            std::cin >> employee.rate;
+        }
+        company.push_back(employee);
+        std::cout << "Do you want add one more employee? (0 - No, 1 - Yes) ";
+        std::cin >> more;
+    } while (more == 1);
+    return 0;
+}
